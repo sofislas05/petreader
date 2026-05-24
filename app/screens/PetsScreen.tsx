@@ -1,27 +1,64 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, Pressable, StyleSheet, Image } from "react-native";
+import { getPets, Pet } from "../lib/pets";
 
 interface Props {
   onBack: () => void;
-  onSelectPet: () => void;
+  onSelectPet: (pet: Pet) => void;
+  onAddPet: () => void;
 }
 
-export default function PetsScreen({ onBack, onSelectPet }: Props) {  return (
+export default function PetsScreen({
+  onBack,
+  onSelectPet,
+  onAddPet,
+}: Props) {
+  const [pets, setPets] = useState<Pet[]>([]);
+
+  useEffect(() => {
+    async function loadPets() {
+      const data = await getPets();
+      setPets(data);
+    }
+
+    loadPets();
+  }, []);
+
+  return (
     <View style={styles.screen}>
       <Pressable style={styles.backButton} onPress={onBack}>
         <Text style={styles.backText}>‹</Text>
       </Pressable>
 
-
       <Text style={styles.title}>Select a pet</Text>
 
-      <Pressable style={styles.petCard} onPress={onSelectPet}>
-        <View style={styles.petImage} />
-        <Text style={styles.petName}>Dona</Text>
-      </Pressable>
+      {pets.map((pet) => (
+        <Pressable
+          key={pet.id}
+          style={styles.petCard}
+          onPress={() => onSelectPet(pet)}
+        >
+          {pet.photo_url ? (
+            <Image
+              source={{ uri: pet.photo_url }}
+              style={styles.petImage}
+            />
+          ) : (
+            <View style={styles.petImage} />
+          )}
 
-      <Pressable style={styles.petCard} onPress={onSelectPet}>
-        <View style={styles.petImage} />
-        <Text style={styles.petName}>Rita</Text>
+          <View>
+            <Text style={styles.petName}>{pet.name}</Text>
+
+            <Text style={styles.petBreed}>
+              {pet.breed || "Unknown breed"}
+            </Text>
+          </View>
+        </Pressable>
+      ))}
+
+      <Pressable style={styles.addPetCard} onPress={onAddPet}>
+        <Text style={styles.addPetText}>+ Add a pet</Text>
       </Pressable>
     </View>
   );
@@ -48,13 +85,14 @@ const styles = StyleSheet.create({
   },
 
   backText: {
+    fontFamily: "Itim_400Regular",
     color: "white",
     fontSize: 24,
   },
 
   title: {
-    fontSize: 30,
-    fontWeight: "800",
+    fontFamily: "Itim_400Regular",
+    fontSize: 36,
     color: "white",
     marginBottom: 22,
     alignSelf: "center",
@@ -78,8 +116,31 @@ const styles = StyleSheet.create({
   },
 
   petName: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontFamily: "Itim_400Regular",
+    fontSize: 28,
     color: "#5F7428",
+  },
+
+  petBreed: {
+    fontFamily: "Itim_400Regular",
+    color: "#5F7428",
+    fontSize: 16,
+  },
+
+  addPetCard: {
+    borderRadius: 16,
+    padding: 18,
+    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "#FFF9E8",
+    justifyContent: "center",
+  },
+
+  addPetText: {
+    fontFamily: "Itim_400Regular",
+    color: "white",
+    fontSize: 28,
   },
 });

@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
+    fontFamily: "Itim_400Regular",
     color: "white",
     fontSize: 18,
     fontWeight: "700",

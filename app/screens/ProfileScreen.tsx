@@ -1,11 +1,21 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, Image } from "react-native";
+import type { Pet } from "../lib/pets";
 
 interface Props {
+  pet: Pet | null;
   onBack: () => void;
   onContinue: () => void;
+  onRemove: (petId: string) => void;
 }
 
-export default function ProfileScreen({ onBack, onContinue }: Props) {
+export default function ProfileScreen({
+  pet,
+  onBack,
+  onContinue,
+  onRemove,
+}: Props) {
+  if (!pet) return null;
+
   return (
     <View style={styles.screen}>
       <Pressable style={styles.backButton} onPress={onBack}>
@@ -13,22 +23,36 @@ export default function ProfileScreen({ onBack, onContinue }: Props) {
       </Pressable>
 
       <View style={styles.card}>
-        <View style={styles.petImage} />
+        {pet.photo_url ? (
+          <Image source={{ uri: pet.photo_url }} style={styles.petImage} />
+        ) : (
+          <View style={styles.petImage} />
+        )}
 
-        <Text style={styles.name}>Dona</Text>
+        <Text style={styles.name}>{pet.name}</Text>
 
-        <Text style={styles.info}>Age: 6 months</Text>
-        <Text style={styles.info}>Species: Dog</Text>
-        <Text style={styles.info}>Breed: Schnauzer</Text>
-        <Text style={styles.info}>Energy: High</Text>
-        <Text style={styles.info}>Health condition: No</Text>
+        <Text style={styles.info}>
+          Age group: {pet.age_group}
+        </Text>
+
+        <Text style={styles.info}>
+          Breed: {pet.breed || "Unknown"}
+        </Text>
+
+        <Text style={styles.info}>
+          Energy level: {pet.energy_level}
+        </Text>
+
+        <Text style={styles.info}>
+          Health condition: {pet.has_known_health_condition}
+        </Text>
 
         <Pressable style={styles.saveButton} onPress={onContinue}>
           <Text style={styles.buttonText}>Analyze behavior</Text>
         </Pressable>
 
-        <Pressable style={styles.removeButton}>
-          <Text style={styles.buttonText}>Remove pet</Text>
+        <Pressable style={styles.removeButton} onPress={() => onRemove(pet.id!)}>
+            <Text style={styles.buttonText}>Remove pet</Text>
         </Pressable>
       </View>
     </View>
@@ -57,6 +81,7 @@ const styles = StyleSheet.create({
   },
 
   backText: {
+    fontFamily: "Itim_400Regular",
     color: "white",
     fontSize: 24,
     marginTop: -2,
@@ -79,17 +104,17 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontSize: 26,
-    fontWeight: "800",
+    fontFamily: "Itim_400Regular",
+    fontSize: 30,
     color: "#5F7428",
     marginBottom: 16,
   },
 
   info: {
+    fontFamily: "Itim_400Regular",
     width: "100%",
     fontSize: 17,
     color: "#5F7428",
-    fontWeight: "600",
     marginBottom: 10,
   },
 
@@ -114,8 +139,8 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
+    fontFamily: "Itim_400Regular",
     color: "white",
     fontSize: 17,
-    fontWeight: "700",
   },
 });
