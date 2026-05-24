@@ -1,7 +1,3 @@
-export type AgeGroup = "puppy" | "adult" | "senior";
-export type EnergyLevel = "low" | "medium" | "high";
-export type YesNo = "yes" | "no";
-
 export type HiddenState =
   | "normal_comfort"
   | "hungry_or_routine_need"
@@ -9,6 +5,8 @@ export type HiddenState =
   | "possible_stress"
   | "possible_discomfort"
   | "possible_health_concern";
+
+export type Posterior = Record<HiddenState, number>;
 
 export type Posture =
   | "laying_belly_down"
@@ -20,7 +18,9 @@ export type Posture =
   | "arched_back";
 
 export type Tail = "wag" | "down" | "normal";
+
 export type Ears = "up" | "down";
+
 export type Tongue = "out" | "in";
 
 export type ActivityChange =
@@ -32,11 +32,7 @@ export type HeadPosition =
   | "normal"
   | "pressed_against_object";
 
-export interface PetProfile {
-  ageGroup: AgeGroup;
-  energyLevel: EnergyLevel;
-  hasKnownHealthCondition: YesNo;
-}
+export type YesNo = "yes" | "no";
 
 export interface Evidence {
   posture?: Posture;
@@ -48,4 +44,11 @@ export interface Evidence {
   appetiteChanged?: YesNo;
 }
 
-export type ProbabilityDistribution = Record<HiddenState, number>;
+export const hiddenStates: HiddenState[] = [
+  "normal_comfort",
+  "hungry_or_routine_need",
+  "playful_attention",
+  "possible_stress",
+  "possible_discomfort",
+  "possible_health_concern",
+];

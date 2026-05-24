@@ -1,12 +1,88 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import type { Posterior, HiddenState } from "../engine/types";
+import { getTopState } from "../engine/inference";
+
 interface Props {
+  posterior: Posterior | null;
   onBack: () => void;
   onDone: () => void;
 }
 
-export default function RecommendationScreen({ onBack, onDone }: Props) {
+const recommendations: Record<
+  HiddenState,
+  { summary: string; actions: string[] }
+> = {
+  normal_comfort: {
+    summary: "Your pet seems most consistent with normal comfort.",
+    actions: [
+      "Let them rest or continue what they were doing.",
+      "Keep observing casually.",
+      "No urgent action is suggested from this observation.",
+    ],
+  },
+
+  hungry_or_routine_need: {
+    summary: "Your pet may be showing signs of a routine need.",
+    actions: [
+      "Check food, water, or usual schedule.",
+      "Consider whether it is close to meal or walk time.",
+      "Observe if behavior changes after meeting the routine need.",
+    ],
+  },
+
+  playful_attention: {
+    summary: "Your pet seems most consistent with playful or attention-seeking behavior.",
+    actions: [
+      "Offer a short play session.",
+      "Check if they want interaction or stimulation.",
+      "Observe if their behavior changes afterward.",
+    ],
+  },
+
+  possible_stress: {
+    summary: "Your pet may be showing possible signs of stress.",
+    actions: [
+      "Reduce noise or stimulation around them.",
+      "Give them a calm, familiar space.",
+      "Monitor whether the behavior persists or worsens.",
+    ],
+  },
+
+  possible_discomfort: {
+    summary: "Your pet may be showing possible signs of discomfort.",
+    actions: [
+      "Avoid forcing movement or play.",
+      "Monitor posture, appetite, and activity closely.",
+      "If this is unusual or persistent, consider contacting a veterinarian.",
+    ],
+  },
+
+  possible_health_concern: {
+    summary: "This observation may suggest a possible health concern.",
+    actions: [
+      "Monitor closely and compare with their normal behavior.",
+      "Check for appetite, activity, or posture changes.",
+      "Contact a veterinarian if symptoms persist, worsen, or feel unusual.",
+    ],
+  },
+};
+
+function formatPercent(value: number) {
+  return `${Math.round(value * 100)}%`;
+}
+
+export default function RecommendationScreen({
+  posterior,
+  onBack,
+  onDone,
+}: Props) {
+  if (!posterior) return null;
+
+  const topState = getTopState(posterior);
+  const recommendation = recommendations[topState];
+
   return (
-  <ScrollView contentContainerStyle={styles.screen}>
+    <View style={styles.screen}>
       <Pressable style={styles.backButton} onPress={onBack}>
         <Text style={styles.backText}>‹</Text>
       </Pressable>
@@ -14,15 +90,20 @@ export default function RecommendationScreen({ onBack, onDone }: Props) {
       <Text style={styles.title}>Recommendation</Text>
 
       <View style={styles.card}>
-        <Text style={styles.mainText}>
-          Dona seems most consistent with playful or attention-seeking behavior.
+        <Text style={styles.mainText}>{recommendation.summary}</Text>
+
+        <Text style={styles.confidenceText}>
+          Confidence: {formatPercent(posterior[topState])}
         </Text>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Try this:</Text>
-          <Text style={styles.bullet}>• Offer a short play session.</Text>
-          <Text style={styles.bullet}>• Check if she wants interaction or stimulation.</Text>
-          <Text style={styles.bullet}>• Observe if her behavior changes afterward.</Text>
+
+          {recommendation.actions.map((action) => (
+            <Text key={action} style={styles.bullet}>
+              • {action}
+            </Text>
+          ))}
         </View>
 
         <View style={styles.warningBox}>
@@ -37,17 +118,17 @@ export default function RecommendationScreen({ onBack, onDone }: Props) {
       <Pressable style={styles.button} onPress={onDone}>
         <Text style={styles.buttonText}>Done</Text>
       </Pressable>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
-    paddingBottom: 40,
     flex: 1,
     backgroundColor: "#BFD86B",
     paddingHorizontal: 28,
     paddingTop: 75,
+    paddingBottom: 28,
   },
 
   backButton: {
@@ -73,69 +154,63 @@ const styles = StyleSheet.create({
     fontFamily: "Itim_400Regular",
     color: "white",
     fontSize: 36,
-    fontWeight: "800",
     textAlign: "center",
     marginTop: 30,
-    marginBottom: 22,
-    textShadowColor: "rgba(0,0,0,0.35)",
-    textShadowOffset: { width: 2, height: 3 },
-    textShadowRadius: 3,
+    marginBottom: 18,
   },
 
   card: {
     backgroundColor: "#FFF9E8",
     borderRadius: 28,
-    padding: 26,
-    minHeight: 500,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 5,
+    padding: 24,
+    flex: 1,
   },
 
   mainText: {
     fontFamily: "Itim_400Regular",
     color: "#5F7428",
-    fontSize: 24,
-    fontWeight: "800",
-    lineHeight: 31,
-    marginBottom: 28,
+    fontSize: 23,
+    lineHeight: 30,
+    marginBottom: 10,
+  },
+
+  confidenceText: {
+    fontFamily: "Itim_400Regular",
+    color: "#5F7428",
+    fontSize: 20,
+    marginBottom: 22,
   },
 
   section: {
-    marginBottom: 28,
+    marginBottom: 22,
   },
 
   sectionTitle: {
     fontFamily: "Itim_400Regular",
     color: "#5F7428",
     fontSize: 22,
-    fontWeight: "800",
-    marginBottom: 10,
+    marginBottom: 8,
   },
 
   bullet: {
+    fontFamily: "Itim_400Regular",
     color: "#5F7428",
     fontSize: 18,
-    fontWeight: "600",
-    lineHeight: 26,
-    marginBottom: 8,
+    lineHeight: 25,
+    marginBottom: 6,
   },
 
   warningBox: {
     backgroundColor: "#FFE2BC",
     borderRadius: 18,
-    padding: 18,
-    marginTop: 10,
+    padding: 16,
+    marginTop: "auto",
   },
 
   warningTitle: {
     fontFamily: "Itim_400Regular",
-
     color: "#5F7428",
     fontSize: 19,
-    fontWeight: "800",
     marginBottom: 6,
   },
 
@@ -143,24 +218,20 @@ const styles = StyleSheet.create({
     fontFamily: "Itim_400Regular",
     color: "#5F7428",
     fontSize: 16,
-    fontWeight: "600",
     lineHeight: 22,
   },
 
   button: {
-  backgroundColor: "#5F7428",
-  paddingVertical: 16,
-  borderRadius: 20,
-  marginTop: 12,
-  marginBottom: 40,
-  alignItems: "center",
-  elevation: 4,
-},
+    backgroundColor: "#5F7428",
+    paddingVertical: 14,
+    borderRadius: 20,
+    marginTop: 14,
+    alignItems: "center",
+  },
 
   buttonText: {
     fontFamily: "Itim_400Regular",
     color: "white",
     fontSize: 22,
-    fontWeight: "800",
   },
 });

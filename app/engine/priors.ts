@@ -1,15 +1,24 @@
-import { PetProfile, ProbabilityDistribution } from "./types";
+import type { Pet } from "../lib/pets";
+import type { Posterior } from "./types";
+import { hiddenStates } from "./types";
 
-function normalize(dist: ProbabilityDistribution): ProbabilityDistribution {
-  const total = Object.values(dist).reduce((sum, value) => sum + value, 0);
+function normalize(distribution: Posterior): Posterior {
+  const total = hiddenStates.reduce(
+    (sum, state) => sum + distribution[state],
+    0
+  );
 
-  return Object.fromEntries(
-    Object.entries(dist).map(([key, value]) => [key, value / total])
-  ) as ProbabilityDistribution;
+  const normalized = {} as Posterior;
+
+  for (const state of hiddenStates) {
+    normalized[state] = distribution[state] / total;
+  }
+
+  return normalized;
 }
 
-export function getPriors(profile: PetProfile): ProbabilityDistribution {
-  let priors: ProbabilityDistribution = {
+export function getPriors(pet: Pet): Posterior {
+  const priors: Posterior = {
     normal_comfort: 0.30,
     hungry_or_routine_need: 0.18,
     playful_attention: 0.18,
@@ -18,27 +27,28 @@ export function getPriors(profile: PetProfile): ProbabilityDistribution {
     possible_health_concern: 0.12,
   };
 
-  if (profile.ageGroup === "puppy") {
+  if (pet.age_group === "puppy") {
     priors.playful_attention *= 1.5;
+    priors.hungry_or_routine_need *= 1.2;
     priors.possible_health_concern *= 0.8;
   }
 
-  if (profile.ageGroup === "senior") {
+  if (pet.age_group === "senior") {
     priors.playful_attention *= 0.6;
     priors.possible_discomfort *= 1.4;
     priors.possible_health_concern *= 1.5;
   }
 
-  if (profile.energyLevel === "high") {
-    priors.playful_attention *= 1.4;
+  if (pet.energy_level === "high") {
+    priors.playful_attention *= 1.3;
   }
 
-  if (profile.energyLevel === "low") {
+  if (pet.energy_level === "low") {
     priors.normal_comfort *= 1.2;
     priors.playful_attention *= 0.7;
   }
 
-  if (profile.hasKnownHealthCondition === "yes") {
+  if (pet.has_known_health_condition === "yes") {
     priors.possible_discomfort *= 1.5;
     priors.possible_health_concern *= 1.7;
   }

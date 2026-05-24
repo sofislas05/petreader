@@ -1,20 +1,20 @@
-import {
-  Evidence,
-  HiddenState,
-  PetProfile,
-  ProbabilityDistribution,
-} from "./types";
+import type { Pet } from "../lib/pets";
+import type { Evidence, HiddenState, Posterior } from "./types";
+import { hiddenStates } from "./types";
 import { getPriors } from "./priors";
 import { likelihoods } from "./likelihoods";
 
-const states: HiddenState[] = [
-  "normal_comfort",
-  "hungry_or_routine_need",
-  "playful_attention",
-  "possible_stress",
-  "possible_discomfort",
-  "possible_health_concern",
-];
+function normalize(scores: Posterior): Posterior {
+  const total = hiddenStates.reduce((sum, state) => sum + scores[state], 0);
+
+  const normalized = {} as Posterior;
+
+  for (const state of hiddenStates) {
+    normalized[state] = scores[state] / total;
+  }
+
+  return normalized;
+}
 
 function evidenceToKeys(evidence: Evidence): string[] {
   const keys: string[] = [];
@@ -23,48 +23,34 @@ function evidenceToKeys(evidence: Evidence): string[] {
   if (evidence.tail) keys.push(`tail:${evidence.tail}`);
   if (evidence.ears) keys.push(`ears:${evidence.ears}`);
   if (evidence.tongue) keys.push(`tongue:${evidence.tongue}`);
-  if (evidence.activityChange)
-    keys.push(`activityChange:${evidence.activityChange}`);
-  if (evidence.headPosition)
-    keys.push(`headPosition:${evidence.headPosition}`);
-  if (evidence.appetiteChanged)
-    keys.push(`appetiteChanged:${evidence.appetiteChanged}`);
+  if (evidence.headPosition) keys.push(`headPosition:${evidence.headPosition}`);
+  if (evidence.activityChange) keys.push(`activityChange:${evidence.activityChange}`);
+  if (evidence.appetiteChanged) keys.push(`appetiteChanged:${evidence.appetiteChanged}`);
 
   return keys;
 }
 
-export function inferPetState(
-  profile: PetProfile,
-  evidence: Evidence
-): ProbabilityDistribution {
-  const priors = getPriors(profile);
+export function inferPetState(pet: Pet, evidence: Evidence): Posterior {
+  const priors = getPriors(pet);
   const evidenceKeys = evidenceToKeys(evidence);
 
-  const scores = {} as ProbabilityDistribution;
+  const scores = {} as Posterior;
 
-  for (const state of states) {
+  for (const state of hiddenStates) {
     let score = priors[state];
 
     for (const key of evidenceKeys) {
-      score *= likelihoods[state][key] ?? 0.05;
+      score *= likelihoods[state][key] ?? 0.15;
     }
 
     scores[state] = score;
   }
 
-  const total = states.reduce((sum, state) => sum + scores[state], 0);
-
-  const posterior = {} as ProbabilityDistribution;
-
-  for (const state of states) {
-    posterior[state] = scores[state] / total;
-  }
-
-  return posterior;
+  return normalize(scores);
 }
 
-export function getTopState(distribution: ProbabilityDistribution): HiddenState {
-  return states.reduce((best, current) =>
-    distribution[current] > distribution[best] ? current : best
+export function getTopState(posterior: Posterior): HiddenState {
+  return hiddenStates.reduce((best, current) =>
+    posterior[current] > posterior[best] ? current : best
   );
 }

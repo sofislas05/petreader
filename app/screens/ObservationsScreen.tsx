@@ -1,29 +1,53 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import type { Evidence } from "../engine/types";
+import BackButton from "../components/BackButton";
 
 interface Props {
+  evidence: Evidence | null;
   onBack: () => void;
   onTryAgain: () => void;
   onAccurate: () => void;
 }
 
+function formatValue(value?: string) {
+  if (!value) return "Unknown";
+  return value.replaceAll("_", " ");
+}
+
 export default function ObservationsScreen({
+  evidence,
   onBack,
   onTryAgain,
   onAccurate,
 }: Props) {
   return (
     <View style={styles.screen}>
-      <Pressable style={styles.backButton} onPress={onBack}>
-        <Text style={styles.backText}>‹</Text>
-      </Pressable>
+      <BackButton onPress={onBack} />
 
       <Text style={styles.title}>We observed...</Text>
 
       <View style={styles.card}>
-        <Text style={styles.observation}>• Tail up</Text>
-        <Text style={styles.observation}>• Tongue out</Text>
-        <Text style={styles.observation}>• Belly down</Text>
-        <Text style={styles.observation}>• Ears up</Text>
+        <Text style={styles.observation}>
+          • Posture: {formatValue(evidence?.posture)}
+        </Text>
+        <Text style={styles.observation}>
+          • Tail: {formatValue(evidence?.tail)}
+        </Text>
+        <Text style={styles.observation}>
+          • Ears: {formatValue(evidence?.ears)}
+        </Text>
+        <Text style={styles.observation}>
+          • Tongue: {formatValue(evidence?.tongue)}
+        </Text>
+        <Text style={styles.observation}>
+          • Activity: {formatValue(evidence?.activityChange)}
+        </Text>
+        <Text style={styles.observation}>
+          • Head: {formatValue(evidence?.headPosition)}
+        </Text>
+        <Text style={styles.observation}>
+          • Appetite changed: {formatValue(evidence?.appetiteChanged)}
+        </Text>
       </View>
 
       <View style={styles.buttonRow}>
@@ -47,55 +71,26 @@ const styles = StyleSheet.create({
     paddingTop: 75,
   },
 
-  backButton: {
-    position: "absolute",
-    top: 62,
-    left: 28,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "#5F7428",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  backText: {
-    fontFamily: "Itim_400Regular",
-    color: "white",
-    fontSize: 34,
-    marginTop: -4,
-  },
-
   title: {
     fontFamily: "Itim_400Regular",
     color: "white",
-    fontSize: 36,
-    fontWeight: "800",
+    fontSize: 44,
     textAlign: "center",
-    marginTop: 40,
-    marginBottom: 12,
-    textShadowColor: "rgba(0,0,0,0.35)",
-    textShadowOffset: { width: 2, height: 3 },
-    textShadowRadius: 3,
+    marginTop: 75,
+    marginBottom: 22,
   },
 
   card: {
     backgroundColor: "#FFF9E8",
     borderRadius: 28,
     padding: 30,
-    height: 560,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 5,
+    minHeight: 480,
   },
 
   observation: {
     fontFamily: "Itim_400Regular",
-    fontSize: 30,
+    fontSize: 25,
     color: "#5F7428",
-    fontWeight: "700",
     marginBottom: 14,
   },
 
@@ -112,25 +107,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     minWidth: 145,
     alignItems: "center",
-    elevation: 4,
   },
 
   accurateButton: {
-
     backgroundColor: "#5F7428",
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 20,
     minWidth: 145,
     alignItems: "center",
-    elevation: 4,
   },
 
   buttonText: {
     fontFamily: "Itim_400Regular",
-
     color: "white",
     fontSize: 24,
-    fontWeight: "800",
   },
 });

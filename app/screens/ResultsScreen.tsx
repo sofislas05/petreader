@@ -1,25 +1,30 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import BackButton from "../components/BackButton";
+import type { Posterior } from "../engine/types";
+
 
 interface Props {
+  posterior: Posterior | null;
   onBack: () => void;
   onContinue: () => void;
 }
 
-export default function ResultsScreen({ onBack, onContinue }: Props) {
+export default function ResultsScreen({ posterior, onBack, onContinue }: Props) {
   return (
     <View style={styles.screen}>
-      <Pressable style={styles.backButton} onPress={onBack}>
-        <Text style={styles.backText}>‹</Text>
-      </Pressable>
+      <BackButton onPress={onBack} />
 
       <Text style={styles.title}>Possible states</Text>
 
       <View style={styles.card}>
-        <ResultBar label="Normal comfort" percent={42} />
-        <ResultBar label="Playful / attention" percent={28} />
-        <ResultBar label="Routine need" percent={16} />
-        <ResultBar label="Possible stress" percent={9} />
-        <ResultBar label="Possible discomfort" percent={5} />
+        {posterior &&
+        Object.entries(posterior).map(([state, probability]) => (
+            <ResultBar
+              key={state}
+              label={state.replaceAll("_", " ")}
+              percent={Math.round(probability * 100)}
+            />
+          ))}
       </View>
 
       <Pressable style={styles.button} onPress={onContinue}>
@@ -52,25 +57,6 @@ const styles = StyleSheet.create({
     paddingTop: 75,
   },
 
-  backButton: {
-    position: "absolute",
-    top: 62,
-    left: 28,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "#5F7428",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  backText: {
-    fontFamily: "Itim_400Regular",
-    color: "white",
-    fontSize: 34,
-    marginTop: -4,
-  },
-
   title: {
     fontFamily: "Itim_400Regular",
     color: "white",
@@ -79,9 +65,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 75,
     marginBottom: 22,
-    textShadowColor: "rgba(0,0,0,0.35)",
-    textShadowOffset: { width: 2, height: 3 },
-    textShadowRadius: 3,
+
   },
 
   card: {

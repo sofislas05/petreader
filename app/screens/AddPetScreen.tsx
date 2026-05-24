@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BackButton from "../components/BackButton";
 import {
   View,
   Text,
@@ -86,9 +87,7 @@ export default function AddPetScreen({ onBack, onSave }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.screen}>
-      <Pressable style={styles.backButton} onPress={onBack}>
-        <Text style={styles.backText}>‹</Text>
-      </Pressable>
+      <BackButton onPress={onBack} />
 
       <Text style={styles.title}>Add a pet</Text>
 
@@ -196,26 +195,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingTop: 75,
     paddingBottom: 40,
-  },
-
-  backButton: {
-    position: "absolute",
-    top: 62,
-    left: 28,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "#5F7428",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 2,
-  },
-
-  backText: {
-    fontFamily: "Itim_400Regular",
-    color: "white",
-    fontSize: 34,
-    marginTop: -4,
   },
 
   title: {

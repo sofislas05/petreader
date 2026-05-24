@@ -1,4 +1,4 @@
-import { HiddenState } from "./types";
+import type { HiddenState } from "./types";
 
 export const likelihoods: Record<HiddenState, Record<string, number>> = {
   normal_comfort: {
@@ -20,12 +20,12 @@ export const likelihoods: Record<HiddenState, Record<string, number>> = {
     "tongue:out": 0.30,
     "tongue:in": 0.60,
 
+    "headPosition:normal": 0.90,
+    "headPosition:pressed_against_object": 0.02,
+
     "activityChange:normal": 0.80,
     "activityChange:less_active_than_usual": 0.10,
     "activityChange:more_active_than_usual": 0.15,
-
-    "headPosition:normal": 0.90,
-    "headPosition:pressed_against_object": 0.02,
 
     "appetiteChanged:no": 0.85,
     "appetiteChanged:yes": 0.10,
@@ -50,12 +50,12 @@ export const likelihoods: Record<HiddenState, Record<string, number>> = {
     "tongue:out": 0.25,
     "tongue:in": 0.55,
 
+    "headPosition:normal": 0.85,
+    "headPosition:pressed_against_object": 0.03,
+
     "activityChange:normal": 0.50,
     "activityChange:less_active_than_usual": 0.20,
     "activityChange:more_active_than_usual": 0.30,
-
-    "headPosition:normal": 0.85,
-    "headPosition:pressed_against_object": 0.03,
 
     "appetiteChanged:no": 0.40,
     "appetiteChanged:yes": 0.50,
@@ -80,12 +80,12 @@ export const likelihoods: Record<HiddenState, Record<string, number>> = {
     "tongue:out": 0.55,
     "tongue:in": 0.30,
 
+    "headPosition:normal": 0.90,
+    "headPosition:pressed_against_object": 0.02,
+
     "activityChange:normal": 0.35,
     "activityChange:more_active_than_usual": 0.65,
     "activityChange:less_active_than_usual": 0.05,
-
-    "headPosition:normal": 0.90,
-    "headPosition:pressed_against_object": 0.02,
 
     "appetiteChanged:no": 0.75,
     "appetiteChanged:yes": 0.10,
@@ -110,12 +110,12 @@ export const likelihoods: Record<HiddenState, Record<string, number>> = {
     "tongue:out": 0.50,
     "tongue:in": 0.35,
 
+    "headPosition:normal": 0.75,
+    "headPosition:pressed_against_object": 0.10,
+
     "activityChange:normal": 0.30,
     "activityChange:less_active_than_usual": 0.45,
     "activityChange:more_active_than_usual": 0.35,
-
-    "headPosition:normal": 0.75,
-    "headPosition:pressed_against_object": 0.10,
 
     "appetiteChanged:no": 0.45,
     "appetiteChanged:yes": 0.35,
@@ -140,12 +140,12 @@ export const likelihoods: Record<HiddenState, Record<string, number>> = {
     "tongue:out": 0.45,
     "tongue:in": 0.35,
 
+    "headPosition:normal": 0.60,
+    "headPosition:pressed_against_object": 0.45,
+
     "activityChange:less_active_than_usual": 0.75,
     "activityChange:normal": 0.20,
     "activityChange:more_active_than_usual": 0.05,
-
-    "headPosition:normal": 0.60,
-    "headPosition:pressed_against_object": 0.45,
 
     "appetiteChanged:yes": 0.55,
     "appetiteChanged:no": 0.30,
@@ -170,12 +170,12 @@ export const likelihoods: Record<HiddenState, Record<string, number>> = {
     "tongue:out": 0.40,
     "tongue:in": 0.35,
 
+    "headPosition:pressed_against_object": 0.60,
+    "headPosition:normal": 0.50,
+
     "activityChange:less_active_than_usual": 0.85,
     "activityChange:normal": 0.15,
     "activityChange:more_active_than_usual": 0.03,
-
-    "headPosition:pressed_against_object": 0.60,
-    "headPosition:normal": 0.50,
 
     "appetiteChanged:yes": 0.75,
     "appetiteChanged:no": 0.20,

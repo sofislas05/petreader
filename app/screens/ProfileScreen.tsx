@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet, Image } from "react-native";
 import type { Pet } from "../lib/pets";
+import BackButton from "../components/BackButton";
 
 interface Props {
   pet: Pet | null;
@@ -18,9 +19,7 @@ export default function ProfileScreen({
 
   return (
     <View style={styles.screen}>
-      <Pressable style={styles.backButton} onPress={onBack}>
-        <Text style={styles.backText}>‹</Text>
-      </Pressable>
+      <BackButton onPress={onBack} />
 
       <View style={styles.card}>
         {pet.photo_url ? (
@@ -66,25 +65,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
-  },
-
-  backButton: {
-    position: "absolute",
-    top: 62,
-    left: 28,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "#6B7F2A",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  backText: {
-    fontFamily: "Itim_400Regular",
-    color: "white",
-    fontSize: 24,
-    marginTop: -2,
   },
 
   card: {

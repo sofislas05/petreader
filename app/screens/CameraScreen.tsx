@@ -1,25 +1,59 @@
+import { useRef } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import BackButton from "../components/BackButton";
 
 interface Props {
   onBack: () => void;
-  onCapture: () => void;
+  onCapture: (photoUri: string) => void;
 }
 
 export default function CameraScreen({ onBack, onCapture }: Props) {
+  const cameraRef = useRef<CameraView>(null);
+  const [permission, requestPermission] = useCameraPermissions();
+
+  async function takePicture() {
+    console.log("Taking picture...");
+
+    const photo = await cameraRef.current?.takePictureAsync({
+      quality: 0.7,
+    });
+
+    console.log("Photo:", photo?.uri);
+
+    if (photo?.uri) {
+      onCapture(photo.uri);
+    }
+  }
+
+  if (!permission) return <View style={styles.screen} />;
+
+  if (!permission.granted) {
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.permissionText}>
+          We need camera permission to take a pet photo.
+        </Text>
+
+        <Pressable style={styles.button} onPress={requestPermission}>
+          <Text style={styles.buttonText}>Grant permission</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.screen}>
-      <Pressable style={styles.backButton} onPress={onBack}>
-        <Text style={styles.backText}>‹</Text>
-      </Pressable>
+      <BackButton onPress={onBack} />
 
       <Text style={styles.title}>Capture a picture{"\n"}of your pet</Text>
 
-      <View style={styles.cameraBox} />
+      <View style={styles.cameraBox}>
+        <CameraView ref={cameraRef} style={styles.camera} facing="back" />
+      </View>
 
-      <Pressable style={styles.boneButton} onPress={onCapture}>
-        <View style={styles.boneCircleLeft} />
-        <View style={styles.boneMiddle} />
-        <View style={styles.boneCircleRight} />
+      <Pressable style={styles.captureButton} onPress={takePicture}>
+        <Text style={styles.captureText}>Capture</Text>
       </Pressable>
     </View>
   );
@@ -34,37 +68,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
 
-  backButton: {
-    position: "absolute",
-    top: 62,
-    left: 28,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "#5F7428",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  backText: {
-    fontFamily: "Itim_400Regular",
-    color: "white",
-    fontSize: 34,
-    marginTop: -4,
-  },
-
   title: {
     fontFamily: "Itim_400Regular",
     color: "white",
     fontSize: 32,
-    fontWeight: "800",
     textAlign: "center",
-    lineHeight: 34,
     marginTop: 35,
     marginBottom: 24,
-    textShadowColor: "rgba(0,0,0,0.35)",
-    textShadowOffset: { width: 2, height: 3 },
-    textShadowRadius: 3,
   },
 
   cameraBox: {
@@ -72,44 +82,46 @@ const styles = StyleSheet.create({
     height: 520,
     backgroundColor: "#FFF9E8",
     borderRadius: 28,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 5,
+    overflow: "hidden",
   },
 
-  boneButton: {
-    marginTop: 45,
-    width: 170,
-    height: 70,
-    justifyContent: "center",
-    alignItems: "center",
+  camera: {
+    flex: 1,
   },
 
-  boneMiddle: {
-    position: "absolute",
-    width: 120,
-    height: 36,
+  captureButton: {
+    backgroundColor: "#5F7428",
+    paddingVertical: 16,
+    paddingHorizontal: 48,
+    borderRadius: 22,
+    marginTop: 36,
+  },
+
+  captureText: {
+    fontFamily: "Itim_400Regular",
+    color: "white",
+    fontSize: 24,
+  },
+
+  permissionText: {
+    fontFamily: "Itim_400Regular",
+    color: "white",
+    fontSize: 26,
+    textAlign: "center",
+    marginTop: 250,
+    marginBottom: 24,
+  },
+
+  button: {
+    backgroundColor: "#5F7428",
+    paddingVertical: 14,
+    paddingHorizontal: 30,
     borderRadius: 18,
-    backgroundColor: "#5F7428",
   },
 
-  boneCircleLeft: {
-    position: "absolute",
-    left: 0,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#5F7428",
-  },
-
-  boneCircleRight: {
-    position: "absolute",
-    right: 0,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#5F7428",
+  buttonText: {
+    fontFamily: "Itim_400Regular",
+    color: "white",
+    fontSize: 22,
   },
 });

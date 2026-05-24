@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet, Image } from "react-native";
 import { getPets, Pet } from "../lib/pets";
+import BackButton from "../components/BackButton";
 
 interface Props {
   onBack: () => void;
@@ -26,9 +27,7 @@ export default function PetsScreen({
 
   return (
     <View style={styles.screen}>
-      <Pressable style={styles.backButton} onPress={onBack}>
-        <Text style={styles.backText}>‹</Text>
-      </Pressable>
+      <BackButton onPress={onBack} />
 
       <Text style={styles.title}>Select a pet</Text>
 
@@ -70,24 +69,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#BFD86B",
     padding: 24,
     justifyContent: "center",
-  },
-
-  backButton: {
-    position: "absolute",
-    top: 62,
-    left: 28,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "#6B7F2A",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  backText: {
-    fontFamily: "Itim_400Regular",
-    color: "white",
-    fontSize: 24,
   },
 
   title: {
