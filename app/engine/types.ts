@@ -32,7 +32,7 @@ export type HeadPosition =
   | "normal"
   | "pressed_against_object";
 
-export type YesNo = "yes" | "no";
+// export type YesNo = "yes" | "no";
 
 export interface Evidence {
   posture?: Posture;

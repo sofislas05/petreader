@@ -1,14 +1,13 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, Image } from "react-native";
 
 interface Props {
   onStart: () => void;
 }
-
+const logo = require("../assets/pet-mind-logo.jpg");
 export default function HomeScreen({ onStart }: Props) {
   return (
     <View style={styles.screen}>
-      <View style={styles.circle} />
-
+      <Image source={logo} style={styles.logo} />
       <Pressable style={styles.button} onPress={onStart}>
         <Text style={styles.buttonText}>Start</Text>
       </Pressable>
@@ -24,13 +23,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  circle: {
-    width: 170,
-    height: 170,
-    borderRadius: 85,
-    backgroundColor: "#5F7428",
+    logo: {
+    width: 290,
+    height: 190,
+    borderRadius: 95,
     marginBottom: 28,
-  },
+    resizeMode: "cover",
+    },
 
   button: {
     backgroundColor: "#FFB16B",
